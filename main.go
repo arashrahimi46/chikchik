@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"strings"
 )
 
 type webhookReqBody struct {
@@ -24,16 +23,20 @@ func Handler(res http.ResponseWriter, req *http.Request) {
 		fmt.Println("could not decode request body", err)
 		return
 	}
-
-	if !strings.Contains(strings.ToLower(body.Message.Text), "marco") {
-		return
+	chatId := body.Message.Chat.ID
+	switch body.Message.Text {
+	case "/start":
+		message := "با سلام به ربات چیک چیک خوش آمدید شما میتونید خیلی راحت عکساتون رو برای من بفرستین تا من براتون چاپشون کنم"
+		if err :=sendTextResponse(chatId , message) ; err !=nil{
+			fmt.Println("error in sending response:", err)
+		}
 	}
 
 
-	if err := sayPolo(body.Message.Chat.ID); err != nil {
-		fmt.Println("error in sending reply:", err)
-		return
-	}
+	//if err := sendResponse(body.Message.Chat.ID); err != nil {
+	//	fmt.Println("error in sending reply:", err)
+	//	return
+	//}
 
 	fmt.Println("reply sent")
 }
@@ -44,16 +47,15 @@ type sendMessageReqBody struct {
 	Text   string `json:"text"`
 }
 
-func sayPolo(chatID int64) error {
+func sendTextResponse(chatID int64 , message string) error {
 	reqBody := &sendMessageReqBody{
 		ChatID: chatID,
-		Text:   "Polo!!",
+		Text:   message,
 	}
 	reqBytes, err := json.Marshal(reqBody)
 	if err != nil {
 		return err
 	}
-
 	res, err := http.Post("https://api.telegram.org/bot756796739:AAF9Z1godxLSb2ik2DRNwlxgEM97-m71xGI/sendMessage", "application/json", bytes.NewBuffer(reqBytes))
 	if err != nil {
 		return err
@@ -61,7 +63,6 @@ func sayPolo(chatID int64) error {
 	if res.StatusCode != http.StatusOK {
 		return errors.New("unexpected status" + res.Status)
 	}
-
 	return nil
 }
 
