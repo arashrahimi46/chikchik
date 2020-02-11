@@ -24,6 +24,7 @@ func Handler(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 	chatId := body.Message.Chat.ID
+	fmt.Print(body.Message.Text , chatId)
 	switch body.Message.Text {
 	case "/start":
 		message := "با سلام به ربات چیک چیک خوش آمدید شما میتونید خیلی راحت عکساتون رو برای من بفرستین تا من براتون چاپشون کنم"
