@@ -31,6 +31,12 @@ func Handler(res http.ResponseWriter, req *http.Request) {
 		if err :=sendTextResponse(chatId , message) ; err !=nil{
 			fmt.Println("error in sending response:", err)
 		}
+
+	default:
+		message := "متاسفیم چیک چیک برای این دستور برنامه ای ندارد."
+		if err :=sendTextResponse(chatId , message) ; err !=nil{
+			fmt.Println("error in sending response:", err)
+		}
 	}
 
 
